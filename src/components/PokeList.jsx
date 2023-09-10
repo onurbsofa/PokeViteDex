@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function PokeList() {
 
@@ -16,20 +17,17 @@ export default function PokeList() {
     }, [])
   
 
-  return (
-    <>
-    <h1>Listado de pokemones</h1>
-    <div className="container">
-      
-      {pokemones.map((pokemon, index) => (
-        <div className="card" key={index}>
-          <img src={pokemon.sprites.front_default} alt={pokemon.name} />
-          <h3>{pokemon.name}</h3>
-          <p>{pokemon.types[0].type.name}</p>
-        </div>
-      ))}
-      
-    </div>
-  </>
-  )
+    return (
+      <div className="container">
+        {pokemones.map((pokemon, index) => (
+          <Link to={`/pokemon/${index + 1}`} key={index}>
+            <div className="card" key={index}>
+              <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+              <h3>{pokemon.name}</h3>
+              <p>{pokemon.types[0].type.name}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    );
 }

@@ -1,28 +1,31 @@
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from 'react'
 
+export default function PokemonCard() {
 
-export default function PokemonCard({ pokemon}) {
+  const [pokemones, setPokemon] = useState([])
+  
+    useEffect(() => {
+      fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+        .then(response => response.json())
+        .then(allPokemons => allPokemons.results.map(pokemon => {
+          fetch(pokemon.url)
+            .then(response => response.json())
+            .then(pokemon => setPokemon(pokemones => [...pokemones, pokemon]))
+        }))
+        .catch(error => console.log(error))
+    }, [])
+
+  const { id } = useParams();
+  const pokemon = pokemones[id - 1]; // Resta 1 para obtener el índice correcto
+
+  if (!pokemon) {
+    return <div>No se encontró el Pokémon.</div>;
+  }
+
   return (
-    <>
-        <div className="pokemon-card">
-        <img src={pokemon.sprites.front_default} alt={pokemon.name} />
-        <h2>{pokemon.name}</h2>
-        <div className="types">
-        <h3>Tipo(s):</h3>
-        <ul>
-            {pokemon.types.map((type, index) => (
-            <li key={index}>{type.type.name}</li>
-            ))}
-        </ul>
-        </div>
-        <div className="abilities">
-        <h3>Habilidades:</h3>
-        <ul>
-            {pokemon.abilities.map((ability, index) => (
-            <li key={index}>{ability.ability.name}</li>
-            ))}
-        </ul>
-        </div>
+    <div className="detalle">
+      <img src={pokemon.sprites.front_default} alt={pokemon.name} />
     </div>
-  </>
-  )
+  );
 }
