@@ -1,31 +1,32 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-export default function PokemonCard() {
+function DetallePokemon() {
+  const { id } = useParams(); // Obtén el ID del Pokémon desde la URL
+  const [pokemon, setPokemon] = useState(null);
 
-  const [pokemones, setPokemon] = useState([])
-  
-    useEffect(() => {
-      fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
-        .then(response => response.json())
-        .then(allPokemons => allPokemons.results.map(pokemon => {
-          fetch(pokemon.url)
-            .then(response => response.json())
-            .then(pokemon => setPokemon(pokemones => [...pokemones, pokemon]))
-        }))
-        .catch(error => console.log(error))
-    }, [])
-
-  const { id } = useParams();
-  const pokemon = pokemones[id - 1]; // Resta 1 para obtener el índice correcto
+  useEffect(() => {
+    // Realiza una solicitud para obtener los datos del Pokémon por su ID
+    // Puedes usar una lista de Pokémon o una API para esto
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+      .then((response) => response.json())
+      .then((data) => setPokemon(data))
+      .catch((error) => console.error(error));
+  }, [id]);
 
   if (!pokemon) {
-    return <div>No se encontró el Pokémon.</div>;
+    return <div>Cargando...</div>;
   }
 
   return (
-    <div className="detalle">
+    <div>
+      <h2>Detalles de {pokemon.name}</h2>
+      {/* Mostrar los detalles del Pokémon */}
       <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+      {/* ... */}
     </div>
   );
 }
+
+export default DetallePokemon;
+
